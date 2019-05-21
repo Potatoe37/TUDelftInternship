@@ -6,6 +6,8 @@ The first program concerns the case of the game with n=k-2. The second program c
 
 <h2>Case with n=k-2</h2>
 
-
+...
 
 <h2>Variation of the game</h2>
+
+...
