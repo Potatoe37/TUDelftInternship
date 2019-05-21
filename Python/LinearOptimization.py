@@ -30,6 +30,11 @@ def intersection(lst1, lst2):
     lst3 = [value for value in lst1 if value in lst2] 
     return lst3 
 
+def substraction(lst1, lst2):
+    """Returns the substraction of the sets lst1 and lst2""" 
+    lst3 = [value for value in lst1 if value not in lst2] 
+    return lst3 
+
 def nCk(n,k):
     """computes n choose k"""
     f = math.factorial
@@ -58,12 +63,13 @@ elif args.rewards == None:
         b = args.random[1]
     for i in range(n):
         r.append(random()*(b-a)//1+1)
-    r.sort(reverse=True)
 else:
     assert len(args.rewards) == n, "The number of rewards must be the same as the number of boxes"
     r = []
     for i in range(n):
         r.append(args.rewards[i])
+
+r.sort(reverse=True)
 print(f"Rewards: {r}")
 
 #Matrix x=S,y=H
@@ -166,7 +172,7 @@ problem += u
 
 problem.solve()
 for i in range(size_h):
-    print(f"Prob_{hider_strats[i]} = {y[i].varValue}")
+    print(f"Prob_{substraction([j for j in range(n)],hider_strats[i])} = {y[i].varValue}")
 print(f"\nValue = {u.varValue}")
 if u.varValue==v.varValue:
     print("\n Wow! Strong duality and Minimax theorems are correct!")
