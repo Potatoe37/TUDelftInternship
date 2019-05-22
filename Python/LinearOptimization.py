@@ -56,13 +56,13 @@ if args.same:
 elif args.rewards == None:
     r = []
     if args.random == None:
-        a = n
-        b = 1
+        a = 1
+        b = n
     else:
         a = args.random[0]
         b = args.random[1]
     for i in range(n):
-        r.append(random()*(b-a)//1+1)
+        r.append(random()*(b-a)//1+a)
 else:
     assert len(args.rewards) == n, "The number of rewards must be the same as the number of boxes"
     r = []
