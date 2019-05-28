@@ -12,9 +12,10 @@ def incr(base, number):
     assert n > k, "As we select k elements in {1,...,n}, 'base' must be larger than length('number')"
     i = k-1
     number[i] +=1
-    while number[i] >= i+(n-k+1) and i != 0: #For 'i+(n-k+1)', try it yourself... 
+    while number[i] >= i+(n-k+1) and i != 0: #For 'i+(n-k+1)', see page 4 of draft, or try it yourself... 
         number[i] = 0
         number[i-1] += 1
+        #if number[i-1] == i+2: number[i-1] = n #See page 4 of draft
         i -= 1
     if number[0] == n-k+1:
         for j in range(k): number[j] = 0
@@ -23,6 +24,13 @@ def incr(base, number):
         while number[i] <= number[i-1]:
             number[i] += 1
         i += 1
+
+def incringraph(base,number,edges):
+    #Working for n=4 k=2 only
+    assert len(number) == 2, "Sorry, my script is a bit shit for the moment"
+    incr(base, number)
+    while number not in edges: 
+        incr(base, number)
 
 def intersection(lst1, lst2): 
     """Returns the intersection of two lists"""
@@ -54,6 +62,7 @@ n = args.n_boxes[0]
 k = args.k_traps[0]
 assert k < n, "The number of traps must be lower than the number of boxes"
 assert k >= 0 and int(n) == n and int(k) == k, "The number of traps and boxes must be positive integers"
+assert k == n-2 and n==4, "We only defined the problem for n=4 and k=2"
 if args.same:
     r = [1 for i in range(n)]
 elif args.rewards == None:
@@ -85,16 +94,18 @@ if args.test:
 
 r.sort(reverse=True)
 print(f"n={n} and k={k}")
+print("Game with geographical constraints")
 print(f"Rewards: {r}")
 
+edges = [[0,1],[1,2],[2,3],[3,0]]
 #Matrix x=S,y=H
 
 hider_strats = []
 num = [0 for i in range(k)]
 incr(n,num)
-for i in range(nCk(n,k)): # n choose k with k = n-2
+for i in range(len(edges)): #TODO The strategies of the hider are the edges if k=2
+    num = edges[i]
     hider_strats.append(num.copy())
-    incr(n,num)
 
 if verb: print(hider_strats)
 size_h = len(hider_strats)
@@ -102,10 +113,11 @@ size_h = len(hider_strats)
 searcher_strats = []
 for i in range(1,n-k+1):
     num = [0 for j in range(i)]
-    if i != 1: incr(n,num)
-    for j in range(nCk(n,i)):
-        searcher_strats.append(num.copy()) #We must take in account Strategy {0}, but not {0,...,0}
-        incr(n,num)
+    if i != 1: incr(n,num) #We must take in account Strategy {0}, but not {0,...,0}
+    for j in range(4): #TODO 4 edges and 4 vertices
+        if i == 2: num = edges[j]
+        searcher_strats.append(num.copy())
+        if i == 1: incr(n,num)
 
 if verb: print(searcher_strats)
 size_s = len(searcher_strats)
@@ -220,7 +232,7 @@ def conjecture1(n,k,r):
                 pi = game_value/(2*r[i])
                 if (x[i].varValue*10000//1)!=(pi*10000//1):
                     print("Ouch...")
-                    print(f"{searcher_strats[i]} : {x[i].varValue} != {pi}\n")
+                    print(f"{searcher_strats[i]} : {x[i].varValue*10000//1} != {pi*10000//1}\n")
                     return False
             else:
                 if int(x[i].varValue*10000)!=0:
@@ -240,13 +252,13 @@ def conjecture1(n,k,r):
                 pi = game_value/r[i]
                 if (x[i].varValue*10000//1)!=(pi*10000//1):
                     print("Ouch...")
-                    print(f"{searcher_strats[i]} : {x[i].varValue} != {pi}\n")
+                    print(f"{searcher_strats[i]} : {x[i].varValue*10000//1} != {pi*10000//1}\n")
                     return False
             elif searcher_strats[i]==[n-2,n-1]:
                 pi = game_value/(r[n-2]+r[n-1])
                 if (x[i].varValue*10000//1)!=(pi*10000//1):
                     print("Ouch...")
-                    print(f"{searcher_strats[i]} : {x[i].varValue} != {pi}\n")
+                    print(f"{searcher_strats[i]} : {x[i].varValue*10000//1} != {pi*10000//1}\n")
                     return False
             else:
                 if int(x[i].varValue*10000)!=0:
@@ -266,13 +278,13 @@ def conjecture1(n,k,r):
                 pi = game_value/(2*r[i])
                 if (x[i].varValue*10000//1)!=(pi*10000//1):
                     print("Ouch...")
-                    print(f"{searcher_strats[i]} : {x[i].varValue} != {pi}\n")
+                    print(f"{searcher_strats[i]} : {x[i].varValue*10000//1} != {pi*10000//1}\n")
                     return False
             elif len(searcher_strats[i]) == 2 and searcher_strats[i][1]==n-1:
                 pi = game_value/(2*(r[searcher_strats[i][0]]+r[searcher_strats[i][1]])) 
                 if (x[i].varValue*10000//1)!=(pi*10000//1):
                     print("Ouch...")
-                    print(f"{searcher_strats[i]} : {x[i].varValue} != {pi}\n")
+                    print(f"{searcher_strats[i]} : {x[i].varValue*10000//1} != {pi*10000//1}\n")
                     return False
             else:
                 if int(x[i].varValue*10000)!=0:
