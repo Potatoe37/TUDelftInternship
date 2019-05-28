@@ -22,7 +22,7 @@ args = parser.parse_args()
 n_tests = int(args.n_tests[0])
 n_min = int(args.n_min[0])
 n_max = int(args.n_max[0])
-fileout = f'out_{n_min}-{n_max}.txt'
+fileout = f'output_tests/out_{n_min}-{n_max}.txt'
 #os.system(f"echo '' > {fileout}") #Uncomment if you want to reset the output file before starting the test
 for i in range(n_tests):
     signal.signal(signal.SIGINT, stop_test)
